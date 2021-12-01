@@ -1,39 +1,41 @@
-use std::fs::File;
-use std::io::{BufReader, BufRead, Error};
-
-fn parse_text<'a>(buffer: std::io::Lines<BufReader<File>>) -> Vec<i32>{
-    let mut depths: Vec<i32> = Vec::new();
-
-    for depth in buffer {
-        let d: i32 = depth.unwrap().parse().unwrap();
-        depths.push(d);
-    }
-    depths
-}
+use std::io::Error;
+mod day_1;
+use day_1::{day_1_part_2, day_1_part_1};
+use std::env;
 
 fn main() -> Result<(), Error> {
-    let path = "input/day_1/part_1";
-    let input = File::open(path)?;
-    let buffered = BufReader::new(input);
-    let d = parse_text(buffered.lines());
-    let mut depths = d.iter().peekable();
-    
-
-    let mut first: i32 = *depths.next().unwrap();
-    let mut second: i32 = *depths.next().unwrap();
-    let mut third: i32 = *depths.next().unwrap();
-    while let Some(fourth) = depths.next() {
-        if  (first + second + third) < (second + third + fourth) {
-            println!("{:?} {:?} Increase!", (first + second + third), ( second + third + fourth));
-        } else {
-            println!("{:?} {:?} Decrease", (first + second + third), (second + third + fourth));
-        }
-        first = second;
-        second = third;
-        third = *fourth;
+    let args: Vec<String> = env::args().collect();
+    let config = Config::new(&args);
+    if let Ok(c) = config {
+        let puzzle = c.puzzle.as_str();
+        println!("{}", puzzle);
+        match puzzle {
+            "day_1_part_1" => day_1_part_1()?,
+            "day_1_part_2" => day_1_part_2()?,
+            _ => ()
+        };
     }
-
-    println!("");
-
     Ok(())
+}
+
+struct Config {
+    puzzle: String,
+}
+
+impl Config {
+    fn new(args: &[String]) -> Result<Config, &str> {
+        let puzzles = vec!["day_1_part_1", "day_1_part_2"];
+
+        let puzzle = args[1].clone();
+
+        if !puzzles.iter().any(|p| {
+            *p == puzzle.as_str()
+        }) {
+            println!("No puzzle found that matches");
+            println!("Possible puzzles: \n{}", puzzles.join("\n"));
+            return Err("No puzzle found that matches");
+        };
+
+        Ok(Config { puzzle })
+    }
 }
