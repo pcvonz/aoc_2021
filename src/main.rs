@@ -1,6 +1,7 @@
 use std::io::Error;
 mod day_1;
 mod day_2;
+mod day_3;
 use day_1::{day_1_part_2, day_1_part_1};
 use day_2::{part_2, part_1};
 use std::env;
@@ -16,6 +17,8 @@ fn main() -> Result<(), Error> {
             "day_1_part_2" => day_1_part_2()?,
             "day_2_part_1" => part_1()?,
             "day_2_part_2" => part_2()?,
+            "day_3_part_1" => day_3::part_1()?,
+            "day_3_part_2" => day_3::part_2()?,
             _ => ()
         };
     }
@@ -28,7 +31,14 @@ struct Config {
 
 impl Config {
     fn new(args: &[String]) -> Result<Config, &str> {
-        let puzzles = vec!["day_1_part_1", "day_1_part_2", "day_2_part_1", "day_2_part_2"];
+        let puzzles = vec![
+            "day_1_part_1",
+            "day_1_part_2", 
+            "day_2_part_1", 
+            "day_2_part_2",
+            "day_3_part_2",
+            "day_3_part_1"
+        ];
 
         let puzzle = args[1].clone();
 
