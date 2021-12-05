@@ -106,7 +106,7 @@ impl Grid {
         }
     }
 
-    fn draw_diagnol_line_positive(&mut self, line: Line) {
+    fn draw_diagonal_positive(&mut self, line: Line) {
         let (begin, end) =  if line.begin.x < line.end.x {
             (line.begin, line.end) 
         } else {
@@ -121,7 +121,7 @@ impl Grid {
         };
     }
 
-    fn draw_diagnol_line_negative(&mut self, line: Line) {
+    fn draw_diagonal_negative(&mut self, line: Line) {
         let (begin, end) =  if line.begin.x > line.end.x {
             (line.begin, line.end) 
         } else {
@@ -139,15 +139,15 @@ impl Grid {
 
     }
 
-    pub fn draw_line_diagnol(&mut self, line: Line) {
+    pub fn draw_line_diagonal(&mut self, line: Line) {
         if line.begin.x == line.end.x {
             self.draw_vertical_line(line);
         } else if line.begin.y == line.end.y {
             self.draw_horizontal_line(line);
         } else if (line.begin.x + line.begin.y) == (line.end.x + line.end.y) {
-            self.draw_diagnol_line_negative(line);
+            self.draw_diagonal_positive(line);
         } else {
-            self.draw_diagnol_line_positive(line);
+            self.draw_diagonal_negative(line);
         }
     }
 }
@@ -198,10 +198,6 @@ pub fn part_1() -> Result<(), Error> {
       grid.draw_line(line);
   }
 
-  // for line in &grid.grid {
-  //     println!("{:?}", line);
-  // }
-
   println!("{}", grid.calculate_overlaps(1));
   
   Ok(())
@@ -213,7 +209,7 @@ pub fn part_2() -> Result<(), Error> {
   let mut grid = Grid::new(max_x+2, max_y+2);
 
   for line in lines {
-      grid.draw_line_diagnol(line);
+      grid.draw_line_diagonal(line);
   }
 
   for line in &grid.grid {
@@ -301,28 +297,28 @@ mod tests {
         assert_eq!(grid.calculate_overlaps(2), 11);
     }
     #[test]
-    fn draws_diagnol_positive() {
+    fn draws_diagonal_positive() {
         let mut grid = Grid::new(11, 11);
         let line = Line {
             begin: Point::new(1, 1),
             end: Point::new(4, 4),
         };
 
-        grid.draw_line_diagnol(line.clone());
-        grid.draw_line_diagnol(line.clone());
-        grid.draw_line_diagnol(line.clone());
-        grid.draw_line_diagnol(line.clone());
+        grid.draw_line_diagonal(line.clone());
+        grid.draw_line_diagonal(line.clone());
+        grid.draw_line_diagonal(line.clone());
+        grid.draw_line_diagonal(line.clone());
         assert_eq!(grid.calculate_overlaps(0), 4);
     }
     #[test]
-    fn draws_diagnol_negative() {
+    fn draws_diagonal_negative() {
         let mut grid = Grid::new(10, 10);
         let line = Line {
             begin: Point::new(7, 9),
             end: Point::new(9, 7),
         };
 
-        grid.draw_line_diagnol(line);
+        grid.draw_line_diagonal(line);
         assert_eq!(grid.calculate_overlaps(0), 3);
     }
 }
