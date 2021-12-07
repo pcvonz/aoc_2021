@@ -234,7 +234,7 @@ pub fn part_2() -> Result<(), Error> {
             }
         }
         unsafe {
-            let c_name = std::ffi::CString::new("test.png").unwrap();
+            let c_name = std::ffi::CString::new("./src/day_05/part_2.png").unwrap();
             raylib::ffi::TakeScreenshot(c_name.as_ptr());
         }
 
