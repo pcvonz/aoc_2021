@@ -1,13 +1,14 @@
 use std::fs::File;
 use std::io::{BufReader, BufRead};
 use std::io::Error;
+use raylib::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Grid {
     grid: Vec<Vec<i32>>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 struct Point {
     x: i32,
     y: i32,
@@ -128,8 +129,6 @@ impl Grid {
             (line.end, line.begin) 
         };
 
-        println!("{:?}", begin);
-        println!("{:?}", end);
         let test = (end.x..begin.x+1).into_iter().zip((begin.y..end.y+1).rev());
         for (row, col) in test {
             // println!("{}, {}", row, col);
@@ -145,9 +144,9 @@ impl Grid {
         } else if line.begin.y == line.end.y {
             self.draw_horizontal_line(line);
         } else if (line.begin.x + line.begin.y) == (line.end.x + line.end.y) {
-            self.draw_diagonal_positive(line);
-        } else {
             self.draw_diagonal_negative(line);
+        } else {
+            self.draw_diagonal_positive(line);
         }
     }
 }
@@ -190,7 +189,7 @@ fn parse_text(path: String) -> Result<Vec<Line>, Error> {
 }
 
 pub fn part_1() -> Result<(), Error> {
-  let lines = parse_text(String::from("input/day_5/input"))?;
+  let lines = parse_text(String::from("input/day_5/example"))?;
   let (max_x, max_y) = find_max_x_max_y(&lines);
   let mut grid = Grid::new(max_x, max_y);
 
@@ -212,11 +211,40 @@ pub fn part_2() -> Result<(), Error> {
       grid.draw_line_diagonal(line);
   }
 
-  for line in &grid.grid {
-      println!("{:?}", line);
+
+  let (mut rl, thread) = raylib::init()
+        .size(1000, 1000)
+        .title("Hello, World")
+        .build();
+     
+    while !rl.window_should_close() {
+        let mut d = rl.begin_drawing(&thread);
+        d.clear_background(Color::BLACK);
+        for (row_index, row) in grid.grid.iter().enumerate() {
+            for (col_index, col) in row.iter().enumerate() {
+                let opacity = if *col > (u8::max_value() as i32) {
+                    u8::max_value() as i32
+                } else {
+                    *col
+                } * 70;
+                let red = ( opacity * 30 ) as u8;
+                let blue = ( opacity * 40 ) as u8;
+                let green = (opacity * 60) as u8;
+                d.draw_pixel(row_index as i32, col_index as i32, Color::new(red, green, blue, opacity as u8));
+            }
+        }
+        unsafe {
+            let c_name = std::ffi::CString::new("test.png").unwrap();
+            raylib::ffi::TakeScreenshot(c_name.as_ptr());
+        }
+
+    }
+  for grid in &grid.grid.clone() {
+      println!("{:?}", grid);
   }
 
-  println!("{}", grid.calculate_overlaps(1));
+
+  println!("{}", &grid.clone().calculate_overlaps(1));
   
   Ok(())
 }

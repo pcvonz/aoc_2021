@@ -2,22 +2,22 @@ use std::fs::File;
 use std::io::{BufReader, BufRead};
 use std::io::Error;
 
-fn parse_text(path: String) -> Result<Vec<i64>, Error> {
+fn parse_text(path: String) -> Result<Vec<i32>, Error> {
     let input = File::open(path)?;
     
-    let fish: Vec<i64> = BufReader::new(input).lines().map(|line| {
+    let fish: Vec<i32> = BufReader::new(input).lines().map(|line| {
         if let Ok(l) = line {
             l.split(",").map(|fish| {
                 fish.parse().expect("Could not parse int")
             }).collect()
         } else {
-            vec![0 as i64]
+            vec![0 as i32]
         }
     }).flatten().collect();
   Ok(fish)
 }
 
-pub fn find_min_max(crabs: &Vec<i64>) -> (i64, i64) {
+pub fn find_min_max(crabs: &Vec<i32>) -> (i32, i32) {
     (
         *crabs.iter().max().unwrap(), *crabs.iter().min().unwrap()
     )
@@ -39,9 +39,9 @@ pub fn part_1() -> Result<(), Error> {
 }
 
 
-pub fn get_amount_of_fuel_used(to_pos: i64, crab_pos: i64) -> i64 {
+pub fn get_amount_of_fuel_used(to_pos: i32, crab_pos: i32) -> i32 {
   let amount_to_move = (crab_pos - to_pos).abs();
-  let current_fuel_used: i64 = (1..amount_to_move + 1).sum();
+  let current_fuel_used: i32 = (1..amount_to_move + 1).sum();
   current_fuel_used
 }
 
@@ -53,7 +53,6 @@ pub fn part_2() -> Result<(), Error> {
       crabs.iter().fold(0, |fuel_used, current_crab_pos| {
           let current_fuel_used = get_amount_of_fuel_used(to_pos, *current_crab_pos);
           fuel_used + current_fuel_used
-
       })
   }).min().unwrap();
 

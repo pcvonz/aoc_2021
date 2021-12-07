@@ -41,7 +41,6 @@ impl Cell {
 #[derive(Clone)]
 pub struct Board {
     cell: Vec<Vec<Cell>>,
-    score: i32,
     board_state: BoardState,
     round: usize,
     last_num: i32,
@@ -119,7 +118,6 @@ impl Board {
         // Set first value
         Board {
             cell: cells,
-            score: 0,
             board_state: BoardState::Loser,
             round: 0,
             last_num: 0

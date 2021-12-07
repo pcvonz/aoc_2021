@@ -26,6 +26,17 @@ mod day_24;
 mod day_25;
 use std::env;
 
+
+#[macro_export]
+macro_rules! print_timed_result {
+    ( $prefix:literal, $expression:expr ) => {
+        let start = std::time::Instant::now();
+        let result = $expression;
+        let duration = start.elapsed();
+        println!("{}: {:?} ({:?})", $prefix, result, duration);
+    };
+}
+
 // Yes I know this is silly
 fn main() -> Result<(), Error> {
     let args: Vec<String> = env::args().collect();
